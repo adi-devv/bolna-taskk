@@ -63,7 +63,9 @@ export async function POST(req: NextRequest) {
     return NextResponse.json(callRecord, { status: 201 });
   } catch (error) {
     console.error('POST /api/calls error:', error);
-    const message = error instanceof Error ? error.message : 'Failed to trigger call';
+    const axiosErr = error as { response?: { data?: { message?: string; detail?: string } } };
+    const bolnaMsg = axiosErr?.response?.data?.message || axiosErr?.response?.data?.detail;
+    const message = bolnaMsg || (error instanceof Error ? error.message : 'Failed to trigger call');
     return NextResponse.json({ error: message }, { status: 500 });
   }
 }

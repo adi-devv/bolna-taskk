@@ -3,14 +3,14 @@ import './globals.css';
 import Sidebar from '@/components/Sidebar';
 
 export const metadata: Metadata = {
-  title: 'MediCall — AI Appointment Confirmation',
-  description: 'Automated voice AI appointment reminders powered by Bolna',
+  title: 'MediCall',
+  description: 'AI-powered appointment confirmation',
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
-      <body className="bg-gray-50 text-gray-900 antialiased">
+      <body className="antialiased" style={{ background: 'var(--background)', color: 'var(--foreground)' }}>
         <div className="flex min-h-screen">
           <Sidebar />
           <main className="flex-1 overflow-auto">{children}</main>
