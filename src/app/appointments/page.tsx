@@ -16,8 +16,6 @@ const FILTERS: { value: FilterStatus; label: string }[] = [
   { value: 'no_answer', label: 'No Answer' },
 ];
 
-const COLS = ['Patient', 'Doctor', 'Date & Time', 'Department', 'Status', ''];
-
 export default function AppointmentsPage() {
   const [appointments, setAppointments] = useState<Appointment[]>([]);
   const [filter, setFilter] = useState<FilterStatus>('all');
@@ -29,26 +27,22 @@ export default function AppointmentsPage() {
   useEffect(() => { load(); }, []);
 
   const triggerCall = async (id: number) => {
-    setCallingId(id);
-    setMessage(null);
+    setCallingId(id); setMessage(null);
     try {
       const res = await fetch('/api/calls', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ appointment_id: id }) });
       const data = await res.json();
       setMessage(res.ok ? { type: 'success', text: 'Call triggered successfully.' } : { type: 'error', text: data.error || 'Failed to trigger call.' });
       if (res.ok) load();
-    } catch {
-      setMessage({ type: 'error', text: 'Network error. Please try again.' });
-    } finally {
-      setCallingId(null);
-    }
+    } catch { setMessage({ type: 'error', text: 'Network error. Please try again.' }); }
+    finally { setCallingId(null); }
   };
 
   const filtered = filter === 'all' ? appointments : appointments.filter(a => a.status === filter);
 
   return (
-    <div style={{ padding: '32px 40px', maxWidth: '1000px' }}>
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '24px' }}>
-        <h1 style={{ fontSize: '16px', fontWeight: 600, color: '#0f0f0f', margin: 0 }}>Appointments</h1>
+    <div style={{ padding: '32px 36px', height: '100%' }}>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '20px' }}>
+        <h1 style={{ fontSize: '15px', fontWeight: 600, color: '#0f0f0f', margin: 0 }}>Appointments</h1>
         <Link href="/appointments/new" style={{
           fontSize: '12px', fontWeight: 500, padding: '7px 14px',
           background: '#0f0f0f', color: '#fff', borderRadius: '6px', textDecoration: 'none',
@@ -74,12 +68,11 @@ export default function AppointmentsPage() {
           const active = filter === f.value;
           return (
             <button key={f.value} onClick={() => setFilter(f.value)} style={{
-              padding: '5px 10px', borderRadius: '5px', fontSize: '12px', fontWeight: active ? 500 : 400,
+              padding: '5px 11px', borderRadius: '5px', fontSize: '12px', fontWeight: active ? 500 : 400,
               cursor: 'pointer', border: active ? 'none' : '1px solid #e8e8e6',
-              background: active ? '#0f0f0f' : '#fff',
-              color: active ? '#fff' : '#6b6b6b',
+              background: active ? '#0f0f0f' : '#fff', color: active ? '#fff' : '#6b6b6b',
             }}>
-              {f.label} <span style={{ opacity: 0.55 }}>{count}</span>
+              {f.label} <span style={{ opacity: 0.5 }}>{count}</span>
             </button>
           );
         })}
@@ -87,12 +80,12 @@ export default function AppointmentsPage() {
 
       <div style={{ background: '#fff', border: '1px solid #e8e8e6', borderRadius: '8px', overflow: 'hidden' }}>
         {loading ? (
-          <div style={{ padding: '48px', textAlign: 'center', color: '#a3a3a3', fontSize: '13px' }}>Loading…</div>
+          <div style={{ padding: '60px', textAlign: 'center', color: '#a3a3a3', fontSize: '13px' }}>Loading…</div>
         ) : filtered.length === 0 ? (
-          <div style={{ padding: '48px', textAlign: 'center' }}>
-            <p style={{ color: '#a3a3a3', fontSize: '13px' }}>No appointments found.</p>
+          <div style={{ padding: '60px', textAlign: 'center' }}>
+            <p style={{ color: '#a3a3a3', fontSize: '13px', margin: 0 }}>No appointments found.</p>
             {filter === 'all' && (
-              <Link href="/appointments/new" style={{ fontSize: '12px', color: '#0f0f0f', marginTop: '8px', display: 'inline-block' }}>
+              <Link href="/appointments/new" style={{ fontSize: '12px', color: '#0f0f0f', marginTop: '10px', display: 'inline-block' }}>
                 Add your first appointment →
               </Link>
             )}
@@ -101,34 +94,30 @@ export default function AppointmentsPage() {
           <table style={{ width: '100%', borderCollapse: 'collapse' }}>
             <thead>
               <tr style={{ borderBottom: '1px solid #f0f0ee' }}>
-                {COLS.map(h => (
-                  <th key={h} style={{
-                    padding: '9px 16px', textAlign: 'left',
-                    fontSize: '11px', fontWeight: 500, color: '#a3a3a3',
-                    textTransform: 'uppercase', letterSpacing: '0.05em',
-                  }}>{h}</th>
+                {['Patient', 'Doctor', 'Date & Time', 'Department', 'Status', ''].map(h => (
+                  <th key={h} style={{ padding: '10px 20px', textAlign: 'left', fontSize: '11px', fontWeight: 500, color: '#a3a3a3', textTransform: 'uppercase', letterSpacing: '0.05em', whiteSpace: 'nowrap' }}>{h}</th>
                 ))}
               </tr>
             </thead>
             <tbody>
               {filtered.map((a, i) => (
                 <tr key={a.id} style={{ borderTop: i > 0 ? '1px solid #f5f5f3' : undefined }}>
-                  <td style={{ padding: '11px 16px' }}>
+                  <td style={{ padding: '12px 20px' }}>
                     <div style={{ fontSize: '13px', fontWeight: 500, color: '#0f0f0f' }}>{a.patient_name}</div>
-                    <div style={{ fontSize: '11px', color: '#a3a3a3', marginTop: '1px' }}>{a.patient_phone}</div>
+                    <div style={{ fontSize: '11px', color: '#a3a3a3', marginTop: '2px' }}>{a.patient_phone}</div>
                   </td>
-                  <td style={{ padding: '11px 16px', fontSize: '12px', color: '#4b4b4b' }}>{a.doctor_name}</td>
-                  <td style={{ padding: '11px 16px', fontSize: '12px', color: '#4b4b4b' }}>
+                  <td style={{ padding: '12px 20px', fontSize: '13px', color: '#4b4b4b', whiteSpace: 'nowrap' }}>{a.doctor_name}</td>
+                  <td style={{ padding: '12px 20px', fontSize: '13px', color: '#4b4b4b', whiteSpace: 'nowrap' }}>
                     {a.appointment_date} <span style={{ color: '#a3a3a3' }}>{a.appointment_time}</span>
                   </td>
-                  <td style={{ padding: '11px 16px', fontSize: '12px', color: '#a3a3a3' }}>{a.department || '—'}</td>
-                  <td style={{ padding: '11px 16px' }}><StatusBadge status={a.status} /></td>
-                  <td style={{ padding: '11px 16px', textAlign: 'right' }}>
+                  <td style={{ padding: '12px 20px', fontSize: '13px', color: '#a3a3a3' }}>{a.department || '—'}</td>
+                  <td style={{ padding: '12px 20px' }}><StatusBadge status={a.status} /></td>
+                  <td style={{ padding: '12px 20px', textAlign: 'right' }}>
                     {(a.status === 'pending' || a.status === 'no_answer') && (
                       <button onClick={() => triggerCall(a.id)} disabled={callingId === a.id} style={{
-                        fontSize: '11px', fontWeight: 500, padding: '5px 10px',
+                        fontSize: '12px', fontWeight: 500, padding: '5px 12px',
                         background: '#0f0f0f', color: '#fff', borderRadius: '5px',
-                        border: 'none', cursor: 'pointer', opacity: callingId === a.id ? 0.4 : 1,
+                        border: 'none', cursor: 'pointer', opacity: callingId === a.id ? 0.4 : 1, whiteSpace: 'nowrap',
                       }}>
                         {callingId === a.id ? 'Calling…' : 'Call Now'}
                       </button>

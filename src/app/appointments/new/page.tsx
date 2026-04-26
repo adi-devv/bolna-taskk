@@ -13,14 +13,14 @@ const doctors = [
   'Dr. Vikram Singh - Neurology',
 ];
 
-const input: React.CSSProperties = {
+const inp: React.CSSProperties = {
   width: '100%', padding: '8px 10px',
   border: '1px solid #e8e8e6', borderRadius: '6px',
   fontSize: '13px', color: '#0f0f0f', background: '#fff', outline: 'none',
 };
 
-function Label({ children }: { children: React.ReactNode }) {
-  return <label style={{ display: 'block', fontSize: '11px', fontWeight: 500, color: '#6b6b6b', marginBottom: '5px', textTransform: 'uppercase', letterSpacing: '0.04em' }}>{children}</label>;
+function Label({ text }: { text: string }) {
+  return <div style={{ fontSize: '11px', fontWeight: 500, color: '#6b6b6b', marginBottom: '5px', textTransform: 'uppercase', letterSpacing: '0.04em' }}>{text}</div>;
 }
 
 export default function NewAppointmentPage() {
@@ -43,15 +43,15 @@ export default function NewAppointmentPage() {
   };
 
   return (
-    <div style={{ padding: '32px 40px', maxWidth: '520px' }}>
+    <div style={{ padding: '32px 36px' }}>
       <div style={{ marginBottom: '24px' }}>
         <Link href="/appointments" style={{ fontSize: '12px', color: '#9a9a9a', textDecoration: 'none' }}>← Appointments</Link>
-        <h1 style={{ fontSize: '16px', fontWeight: 600, color: '#0f0f0f', margin: '8px 0 0' }}>New Appointment</h1>
+        <h1 style={{ fontSize: '15px', fontWeight: 600, color: '#0f0f0f', margin: '8px 0 0' }}>New Appointment</h1>
       </div>
 
-      <div style={{ background: '#fff', border: '1px solid #e8e8e6', borderRadius: '8px', padding: '24px' }}>
+      <div style={{ background: '#fff', border: '1px solid #e8e8e6', borderRadius: '8px', padding: '28px', maxWidth: '600px' }}>
         {error && (
-          <div style={{ marginBottom: '16px', padding: '10px 12px', borderRadius: '6px', fontSize: '12px', background: '#fef2f2', color: '#b91c1c', border: '1px solid #fecaca' }}>
+          <div style={{ marginBottom: '18px', padding: '10px 12px', borderRadius: '6px', fontSize: '12px', background: '#fef2f2', color: '#b91c1c', border: '1px solid #fecaca' }}>
             {error}
           </div>
         )}
@@ -59,18 +59,18 @@ export default function NewAppointmentPage() {
         <form onSubmit={handleSubmit}>
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px', marginBottom: '16px' }}>
             <div>
-              <Label>Patient Name *</Label>
-              <input style={input} type="text" required value={form.patient_name} onChange={e => set('patient_name', e.target.value)} placeholder="Rahul Gupta" />
+              <Label text="Patient Name *" />
+              <input style={inp} type="text" required value={form.patient_name} onChange={e => set('patient_name', e.target.value)} placeholder="Rahul Gupta" />
             </div>
             <div>
-              <Label>Phone * (with country code)</Label>
-              <input style={input} type="tel" required value={form.patient_phone} onChange={e => set('patient_phone', e.target.value)} placeholder="+91 98765 43210" />
+              <Label text="Phone * (with country code)" />
+              <input style={inp} type="tel" required value={form.patient_phone} onChange={e => set('patient_phone', e.target.value)} placeholder="+91 98765 43210" />
             </div>
           </div>
 
           <div style={{ marginBottom: '16px' }}>
-            <Label>Doctor *</Label>
-            <select style={input} required value={form.doctor_name} onChange={e => set('doctor_name', e.target.value)}>
+            <Label text="Doctor *" />
+            <select style={inp} required value={form.doctor_name} onChange={e => set('doctor_name', e.target.value)}>
               <option value="">Select a doctor</option>
               {doctors.map(d => <option key={d} value={d}>{d}</option>)}
               <option value="other">Other</option>
@@ -79,30 +79,30 @@ export default function NewAppointmentPage() {
 
           {form.doctor_name === 'other' && (
             <div style={{ marginBottom: '16px' }}>
-              <Label>Doctor Name</Label>
-              <input style={input} type="text" onChange={e => set('doctor_name', e.target.value)} placeholder="Dr. Name - Specialization" />
+              <Label text="Doctor Name" />
+              <input style={inp} type="text" onChange={e => set('doctor_name', e.target.value)} placeholder="Dr. Name - Specialization" />
             </div>
           )}
 
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px', marginBottom: '16px' }}>
             <div>
-              <Label>Date *</Label>
-              <input style={input} type="date" required value={form.appointment_date} onChange={e => set('appointment_date', e.target.value)} min={new Date().toISOString().split('T')[0]} />
+              <Label text="Date *" />
+              <input style={inp} type="date" required value={form.appointment_date} onChange={e => set('appointment_date', e.target.value)} min={new Date().toISOString().split('T')[0]} />
             </div>
             <div>
-              <Label>Time *</Label>
-              <input style={input} type="time" required value={form.appointment_time} onChange={e => set('appointment_time', e.target.value)} />
+              <Label text="Time *" />
+              <input style={inp} type="time" required value={form.appointment_time} onChange={e => set('appointment_time', e.target.value)} />
             </div>
           </div>
 
           <div style={{ marginBottom: '16px' }}>
-            <Label>Department</Label>
-            <input style={input} type="text" value={form.department} onChange={e => set('department', e.target.value)} placeholder="e.g. Cardiology" />
+            <Label text="Department" />
+            <input style={inp} type="text" value={form.department} onChange={e => set('department', e.target.value)} placeholder="e.g. Cardiology" />
           </div>
 
-          <div style={{ marginBottom: '20px' }}>
-            <Label>Notes</Label>
-            <textarea style={{ ...input, resize: 'none' }} value={form.notes} onChange={e => set('notes', e.target.value)} placeholder="Any special instructions..." rows={3} />
+          <div style={{ marginBottom: '22px' }}>
+            <Label text="Notes" />
+            <textarea style={{ ...inp, resize: 'none' }} value={form.notes} onChange={e => set('notes', e.target.value)} placeholder="Any special instructions..." rows={3} />
           </div>
 
           <div style={{ display: 'flex', gap: '10px' }}>
@@ -113,7 +113,7 @@ export default function NewAppointmentPage() {
               {loading ? 'Creating…' : 'Create Appointment'}
             </button>
             <Link href="/appointments" style={{
-              padding: '9px 20px', borderRadius: '6px', fontSize: '13px', fontWeight: 400,
+              padding: '9px 20px', borderRadius: '6px', fontSize: '13px',
               border: '1px solid #e8e8e6', color: '#4b4b4b', textDecoration: 'none',
               background: '#fff', display: 'flex', alignItems: 'center',
             }}>
