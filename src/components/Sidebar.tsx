@@ -7,7 +7,6 @@ const nav = [
   { href: '/', label: 'Overview' },
   { href: '/appointments', label: 'Appointments' },
   { href: '/calls', label: 'Call Logs' },
-  { href: '/settings', label: 'Settings' },
 ];
 
 export default function Sidebar() {
