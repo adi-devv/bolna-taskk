@@ -1,6 +1,6 @@
 import axios, { AxiosError } from 'axios';
 
-const BOLNA_BASE_URL = process.env.BOLNA_API_BASE_URL || 'https://api.bolna.dev';
+const BOLNA_BASE_URL = process.env.BOLNA_API_BASE_URL || 'https://api.bolna.ai';
 
 function getHeaders() {
   return {
@@ -19,7 +19,6 @@ export type TriggerCallParams = {
     appointment_time: string;
     department?: string;
   };
-  webhookUrl: string;
 };
 
 export type CallResponse = {
@@ -34,8 +33,6 @@ export async function triggerCall(params: TriggerCallParams): Promise<CallRespon
     agent_id: params.agentId,
     recipient_phone_number: params.phoneNumber,
     user_data: params.userData,
-    context_data: params.userData,
-    webhook_url: params.webhookUrl,
   };
 
   const response = await axios.post(
@@ -56,7 +53,7 @@ export async function getExecution(executionId: string): Promise<Record<string, 
 
 export async function validateApiKey(): Promise<boolean> {
   try {
-    await axios.get(`${BOLNA_BASE_URL}/agent/all`, { headers: getHeaders() });
+    await axios.get(`${BOLNA_BASE_URL}/agent`, { headers: getHeaders() });
     return true;
   } catch (e) {
     const err = e as AxiosError;

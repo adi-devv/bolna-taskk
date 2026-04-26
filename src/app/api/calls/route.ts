@@ -38,7 +38,6 @@ export async function POST(req: NextRequest) {
       });
     }
 
-    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
     const agentId = process.env.BOLNA_AGENT_ID!;
 
     const callResponse = await triggerCall({
@@ -51,7 +50,6 @@ export async function POST(req: NextRequest) {
         appointment_time: appointment.appointment_time,
         department: appointment.department,
       },
-      webhookUrl: `${baseUrl}/api/webhook/bolna`,
     });
 
     const callRecord = CallDB.create({

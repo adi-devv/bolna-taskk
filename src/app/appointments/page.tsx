@@ -41,7 +41,7 @@ export default function AppointmentsPage() {
   const filtered = filter === 'all' ? appointments : appointments.filter(a => a.status === filter);
 
   return (
-    <div style={{ padding: '32px 36px', height: '100%' }}>
+    <div className="page-enter" style={{ padding: '32px 36px', height: '100%' }}>
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '20px' }}>
         <h1 style={{ fontSize: '15px', fontWeight: 600, color: '#0f0f0f', margin: 0 }}>Appointments</h1>
         <Link href="/appointments/new" style={{
@@ -102,7 +102,7 @@ export default function AppointmentsPage() {
             </thead>
             <tbody>
               {filtered.map((a, i) => (
-                <tr key={a.id} style={{ borderTop: i > 0 ? '1px solid #f5f5f3' : undefined }}>
+                <tr key={a.id} style={{ borderTop: i > 0 ? '1px solid #f5f5f3' : undefined }} onMouseEnter={e => (e.currentTarget.style.background='#fafaf9')} onMouseLeave={e => (e.currentTarget.style.background='')}>
                   <td style={{ padding: '12px 20px' }}>
                     <div style={{ fontSize: '13px', fontWeight: 500, color: '#0f0f0f' }}>{a.patient_name}</div>
                     <div style={{ fontSize: '11px', color: '#a3a3a3', marginTop: '2px' }}>{a.patient_phone}</div>

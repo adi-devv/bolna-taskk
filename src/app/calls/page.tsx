@@ -29,7 +29,7 @@ export default function CallLogsPage() {
   }, []);
 
   return (
-    <div style={{ padding: '32px 36px', height: '100%' }}>
+    <div className="page-enter" style={{ padding: '32px 36px', height: '100%' }}>
       <div style={{ marginBottom: '24px' }}>
         <h1 style={{ fontSize: '15px', fontWeight: 600, color: '#0f0f0f', margin: 0 }}>Call Logs</h1>
         <p style={{ fontSize: '12px', color: '#9a9a9a', marginTop: '3px', marginBottom: 0 }}>AI voice call records and transcripts</p>
@@ -64,7 +64,7 @@ export default function CallLogsPage() {
               </div>
 
               {expanded === call.id && (
-                <div style={{ borderTop: '1px solid #f5f5f3', background: '#fafaf9', padding: '20px' }}>
+                <div className="expand-enter" style={{ borderTop: '1px solid #f5f5f3', background: '#fafaf9', padding: '20px' }}>
                   <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '20px', marginBottom: '16px' }}>
                     {[
                       { label: 'Call ID', value: call.bolna_call_id || '—', mono: true },

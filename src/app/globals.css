@@ -12,3 +12,47 @@ body {
   line-height: 1.5;
   -webkit-font-smoothing: antialiased;
 }
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.page-enter {
+  animation: fadeIn 0.18s ease both;
+}
+
+tr {
+  transition: background 0.12s ease;
+}
+
+button {
+  transition: opacity 0.15s ease, background 0.15s ease, transform 0.1s ease;
+}
+
+button:active:not(:disabled) {
+  transform: scale(0.97);
+}
+
+@keyframes expandDown {
+  from { opacity: 0; transform: translateY(-4px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.expand-enter {
+  animation: expandDown 0.15s ease both;
+}
+
+a {
+  transition: color 0.12s ease, opacity 0.12s ease;
+}
+
+input, select, textarea {
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+input:focus, select:focus, textarea:focus {
+  border-color: #0f0f0f !important;
+  box-shadow: 0 0 0 2px rgba(15,15,15,0.08);
+  outline: none;
+}
