@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import StatusBadge from '@/components/StatusBadge';
 import type { Appointment } from '@/lib/db';
+import { getCache, setCache } from '@/lib/cache';
 
 type Stats = {
   total: number;
@@ -14,12 +15,12 @@ type Stats = {
 };
 
 export default function Dashboard() {
-  const [stats, setStats] = useState<Stats | null>(null);
-  const [appointments, setAppointments] = useState<Appointment[]>([]);
+  const [stats, setStats] = useState<Stats | null>(() => getCache<Stats>('stats'));
+  const [appointments, setAppointments] = useState<Appointment[]>(() => getCache<Appointment[]>('appointments')?.slice(0, 5) ?? []);
 
   useEffect(() => {
-    fetch('/api/stats').then(r => r.json()).then(setStats);
-    fetch('/api/appointments').then(r => r.json()).then((d: Appointment[]) => setAppointments(d.slice(0, 5)));
+    fetch('/api/stats').then(r => r.json()).then(d => { setCache('stats', d); setStats(d); });
+    fetch('/api/appointments').then(r => r.json()).then((d: Appointment[]) => { setCache('appointments', d); setAppointments(d.slice(0, 5)); });
   }, []);
 
   return (

@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import StatusBadge from '@/components/StatusBadge';
+import { getCache, setCache } from '@/lib/cache';
 
 type CallRecord = {
   id: number;
@@ -19,12 +20,12 @@ type CallRecord = {
 };
 
 export default function CallLogsPage() {
-  const [calls, setCalls] = useState<CallRecord[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [calls, setCalls] = useState<CallRecord[]>(() => getCache<CallRecord[]>('calls') ?? []);
+  const [loading, setLoading] = useState(() => !getCache('calls'));
   const [expanded, setExpanded] = useState<number | null>(null);
 
   useEffect(() => {
-    fetch('/api/calls').then(r => r.json()).then((d: CallRecord[]) => { setCalls(d); setLoading(false); });
+    fetch('/api/calls').then(r => r.json()).then((d: CallRecord[]) => { setCache('calls', d); setCalls(d); setLoading(false); });
   }, []);
 
   return (

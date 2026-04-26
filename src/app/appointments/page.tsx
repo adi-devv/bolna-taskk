@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import StatusBadge from '@/components/StatusBadge';
 import type { Appointment } from '@/lib/db';
+import { getCache, setCache } from '@/lib/cache';
 
 type FilterStatus = 'all' | Appointment['status'];
 
@@ -17,13 +18,13 @@ const FILTERS: { value: FilterStatus; label: string }[] = [
 ];
 
 export default function AppointmentsPage() {
-  const [appointments, setAppointments] = useState<Appointment[]>([]);
+  const [appointments, setAppointments] = useState<Appointment[]>(() => getCache<Appointment[]>('appointments') ?? []);
   const [filter, setFilter] = useState<FilterStatus>('all');
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(() => !getCache('appointments'));
   const [callingId, setCallingId] = useState<number | null>(null);
   const [message, setMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
 
-  const load = () => fetch('/api/appointments').then(r => r.json()).then((d: Appointment[]) => { setAppointments(d); setLoading(false); });
+  const load = () => fetch('/api/appointments').then(r => r.json()).then((d: Appointment[]) => { setCache('appointments', d); setAppointments(d); setLoading(false); });
   useEffect(() => { load(); }, []);
 
   const triggerCall = async (id: number) => {
