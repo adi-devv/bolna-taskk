@@ -5,9 +5,7 @@ import StatusBadge from '@/components/StatusBadge';
 
 type CallRecord = {
   id: number;
-  appointment_id: number;
   bolna_call_id: string;
-  bolna_execution_id: string;
   status: string;
   transcript: string;
   summary: string;
@@ -21,97 +19,91 @@ type CallRecord = {
   appointment_time: string;
 };
 
-const card = { background: '#fff', border: '1px solid #e8e8e5', borderRadius: '10px' };
-
 export default function CallLogsPage() {
   const [calls, setCalls] = useState<CallRecord[]>([]);
   const [loading, setLoading] = useState(true);
   const [expanded, setExpanded] = useState<number | null>(null);
 
   useEffect(() => {
-    fetch('/api/calls')
-      .then(r => r.json())
-      .then((data: CallRecord[]) => { setCalls(data); setLoading(false); });
+    fetch('/api/calls').then(r => r.json()).then((d: CallRecord[]) => { setCalls(d); setLoading(false); });
   }, []);
 
-  const toggle = (id: number) => setExpanded(prev => prev === id ? null : id);
-
   return (
-    <div className="p-8 max-w-3xl">
-      <div className="mb-6">
-        <h1 className="text-base font-semibold" style={{ color: '#1a1a1a' }}>Call Logs</h1>
+    <div style={{ padding: '32px 40px', maxWidth: '760px' }}>
+      <div style={{ marginBottom: '24px' }}>
+        <h1 style={{ fontSize: '16px', fontWeight: 600, color: '#0f0f0f', margin: 0 }}>Call Logs</h1>
+        <p style={{ fontSize: '12px', color: '#9a9a9a', marginTop: '2px' }}>AI voice call records and transcripts</p>
       </div>
 
-      <div style={card} className="overflow-hidden">
+      <div style={{ background: '#fff', border: '1px solid #e8e8e6', borderRadius: '8px', overflow: 'hidden' }}>
         {loading ? (
-          <div className="py-12 text-center text-sm" style={{ color: '#9e9e96' }}>Loading…</div>
+          <div style={{ padding: '48px', textAlign: 'center', color: '#a3a3a3', fontSize: '13px' }}>Loading…</div>
         ) : calls.length === 0 ? (
-          <div className="py-12 text-center">
-            <p className="text-sm" style={{ color: '#9e9e96' }}>No calls yet.</p>
-            <p className="text-xs mt-1" style={{ color: '#c0c0b8' }}>Trigger a call from the Appointments page.</p>
+          <div style={{ padding: '48px', textAlign: 'center' }}>
+            <p style={{ color: '#a3a3a3', fontSize: '13px' }}>No calls yet.</p>
+            <p style={{ color: '#c4c4c4', fontSize: '12px', marginTop: '4px' }}>Trigger a call from the Appointments page.</p>
           </div>
         ) : (
-          <div>
-            {calls.map((call, i) => (
-              <div key={call.id} style={{ borderTop: i > 0 ? '1px solid #f5f5f3' : undefined }}>
-                <div
-                  className="px-5 py-3.5 flex items-center justify-between cursor-pointer"
-                  onClick={() => toggle(call.id)}
-                >
-                  <div>
-                    <p className="text-sm font-medium" style={{ color: '#1a1a1a' }}>{call.patient_name}</p>
-                    <p className="text-xs mt-0.5" style={{ color: '#9e9e96' }}>
-                      {call.doctor_name} · {call.appointment_date} at {call.appointment_time}
-                    </p>
-                  </div>
-                  <div className="flex items-center gap-3">
-                    {call.duration > 0 && (
-                      <span className="text-xs" style={{ color: '#9e9e96' }}>{call.duration}s</span>
-                    )}
-                    <StatusBadge status={call.confirmation_status || call.status} />
-                    <span className="text-xs" style={{ color: '#c0c0b8' }}>{expanded === call.id ? '▲' : '▼'}</span>
+          calls.map((call, i) => (
+            <div key={call.id} style={{ borderTop: i > 0 ? '1px solid #f5f5f3' : undefined }}>
+              <div
+                onClick={() => setExpanded(e => e === call.id ? null : call.id)}
+                style={{
+                  display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+                  padding: '13px 20px', cursor: 'pointer',
+                }}
+              >
+                <div>
+                  <div style={{ fontSize: '13px', fontWeight: 500, color: '#0f0f0f' }}>{call.patient_name}</div>
+                  <div style={{ fontSize: '11px', color: '#a3a3a3', marginTop: '2px' }}>
+                    {call.doctor_name} · {call.appointment_date} at {call.appointment_time}
                   </div>
                 </div>
-
-                {expanded === call.id && (
-                  <div className="px-5 pb-5" style={{ borderTop: '1px solid #f5f5f3', background: '#fafaf9' }}>
-                    <div className="pt-4 grid grid-cols-3 gap-4 mb-4">
-                      {[
-                        { label: 'Call ID', value: call.bolna_call_id || '—', mono: true },
-                        { label: 'Confirmation', value: call.confirmation_status || '—' },
-                        { label: 'Reschedule', value: call.reschedule_preference || '—' },
-                      ].map(item => (
-                        <div key={item.label}>
-                          <p className="text-xs font-medium mb-0.5" style={{ color: '#9e9e96' }}>{item.label}</p>
-                          <p className={`text-xs ${item.mono ? 'font-mono break-all' : ''}`} style={{ color: '#4a4a45' }}>{item.value}</p>
-                        </div>
-                      ))}
-                    </div>
-
-                    {call.summary && (
-                      <div className="mb-4">
-                        <p className="text-xs font-medium mb-1" style={{ color: '#9e9e96' }}>Summary</p>
-                        <p className="text-sm p-3 rounded-md" style={{ color: '#1a1a1a', background: '#fff', border: '1px solid #e8e8e5' }}>{call.summary}</p>
-                      </div>
-                    )}
-
-                    {call.transcript && (
-                      <div>
-                        <p className="text-xs font-medium mb-1" style={{ color: '#9e9e96' }}>Transcript</p>
-                        <pre className="text-xs p-3 rounded-md whitespace-pre-wrap max-h-48 overflow-y-auto font-sans" style={{ color: '#4a4a45', background: '#fff', border: '1px solid #e8e8e5' }}>
-                          {call.transcript}
-                        </pre>
-                      </div>
-                    )}
-
-                    {!call.summary && !call.transcript && (
-                      <p className="text-xs italic" style={{ color: '#c0c0b8' }}>Transcript will appear here once the call completes.</p>
-                    )}
-                  </div>
-                )}
+                <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                  {call.duration > 0 && <span style={{ fontSize: '11px', color: '#a3a3a3' }}>{call.duration}s</span>}
+                  <StatusBadge status={call.confirmation_status || call.status} />
+                  <span style={{ fontSize: '10px', color: '#c4c4c4' }}>{expanded === call.id ? '▲' : '▼'}</span>
+                </div>
               </div>
-            ))}
-          </div>
+
+              {expanded === call.id && (
+                <div style={{ padding: '0 20px 20px', borderTop: '1px solid #f5f5f3', background: '#fafaf9' }}>
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '16px', paddingTop: '16px', marginBottom: '16px' }}>
+                    {[
+                      { label: 'Call ID', value: call.bolna_call_id || '—', mono: true },
+                      { label: 'Confirmation', value: call.confirmation_status || '—' },
+                      { label: 'Reschedule', value: call.reschedule_preference || '—' },
+                    ].map(item => (
+                      <div key={item.label}>
+                        <div style={{ fontSize: '10px', fontWeight: 500, color: '#a3a3a3', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '3px' }}>{item.label}</div>
+                        <div style={{ fontSize: '12px', color: '#4b4b4b', fontFamily: item.mono ? 'monospace' : undefined, wordBreak: 'break-all' }}>{item.value}</div>
+                      </div>
+                    ))}
+                  </div>
+
+                  {call.summary && (
+                    <div style={{ marginBottom: '12px' }}>
+                      <div style={{ fontSize: '10px', fontWeight: 500, color: '#a3a3a3', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '5px' }}>Summary</div>
+                      <div style={{ fontSize: '12px', color: '#0f0f0f', background: '#fff', border: '1px solid #e8e8e6', borderRadius: '6px', padding: '10px 12px', lineHeight: 1.6 }}>{call.summary}</div>
+                    </div>
+                  )}
+
+                  {call.transcript && (
+                    <div>
+                      <div style={{ fontSize: '10px', fontWeight: 500, color: '#a3a3a3', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '5px' }}>Transcript</div>
+                      <pre style={{ fontSize: '11px', color: '#4b4b4b', background: '#fff', border: '1px solid #e8e8e6', borderRadius: '6px', padding: '10px 12px', whiteSpace: 'pre-wrap', maxHeight: '200px', overflowY: 'auto', fontFamily: 'inherit', lineHeight: 1.6, margin: 0 }}>
+                        {call.transcript}
+                      </pre>
+                    </div>
+                  )}
+
+                  {!call.summary && !call.transcript && (
+                    <p style={{ fontSize: '12px', color: '#c4c4c4', fontStyle: 'italic' }}>Transcript will appear here once the call completes.</p>
+                  )}
+                </div>
+              )}
+            </div>
+          ))
         )}
       </div>
     </div>

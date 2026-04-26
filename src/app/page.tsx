@@ -9,13 +9,9 @@ type Stats = {
   total: number;
   confirmed: number;
   pending: number;
-  cancelled: number;
-  rescheduled: number;
   totalCalls: number;
   confirmationRate: number;
 };
-
-const card = { background: '#fff', border: '1px solid #e8e8e5', borderRadius: '10px' };
 
 export default function Dashboard() {
   const [stats, setStats] = useState<Stats | null>(null);
@@ -23,66 +19,98 @@ export default function Dashboard() {
 
   useEffect(() => {
     fetch('/api/stats').then(r => r.json()).then(setStats);
-    fetch('/api/appointments').then(r => r.json()).then((data: Appointment[]) => setAppointments(data.slice(0, 5)));
+    fetch('/api/appointments').then(r => r.json()).then((d: Appointment[]) => setAppointments(d.slice(0, 5)));
   }, []);
 
   return (
-    <div className="p-8 max-w-3xl">
-      <div className="mb-8 flex items-center justify-between">
-        <h1 className="text-base font-semibold" style={{ color: '#1a1a1a' }}>Dashboard</h1>
-        <Link
-          href="/appointments/new"
-          className="text-sm font-medium px-3 py-1.5 rounded-md transition-colors"
-          style={{ background: '#1a1a1a', color: '#fff' }}
-        >
+    <div style={{ padding: '32px 40px', maxWidth: '860px' }}>
+
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '28px' }}>
+        <div>
+          <h1 style={{ fontSize: '16px', fontWeight: 600, color: '#0f0f0f', margin: 0 }}>Overview</h1>
+          <p style={{ fontSize: '12px', color: '#9a9a9a', marginTop: '2px' }}>Appointment confirmation dashboard</p>
+        </div>
+        <Link href="/appointments/new" style={{
+          fontSize: '12px', fontWeight: 500,
+          padding: '7px 14px',
+          background: '#0f0f0f', color: '#fff',
+          borderRadius: '6px', textDecoration: 'none',
+        }}>
           New Appointment
         </Link>
       </div>
 
       {stats && (
-        <div className="grid grid-cols-4 gap-3 mb-8">
+        <div style={{
+          display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)',
+          gap: '12px', marginBottom: '28px',
+        }}>
           {[
             { label: 'Total', value: stats.total },
             { label: 'Confirmed', value: stats.confirmed },
             { label: 'Pending', value: stats.pending },
             { label: 'Confirm Rate', value: `${stats.confirmationRate}%` },
-          ].map((c) => (
-            <div key={c.label} className="p-4" style={card}>
-              <div className="text-2xl font-semibold" style={{ color: '#1a1a1a' }}>{c.value}</div>
-              <div className="text-xs mt-1" style={{ color: '#9e9e96' }}>{c.label}</div>
+          ].map(s => (
+            <div key={s.label} style={{
+              background: '#fff',
+              border: '1px solid #e8e8e6',
+              borderRadius: '8px',
+              padding: '16px',
+            }}>
+              <div style={{ fontSize: '22px', fontWeight: 600, color: '#0f0f0f' }}>{s.value}</div>
+              <div style={{ fontSize: '11px', color: '#9a9a9a', marginTop: '3px', textTransform: 'uppercase', letterSpacing: '0.04em' }}>{s.label}</div>
             </div>
           ))}
         </div>
       )}
 
-      <div style={card} className="overflow-hidden">
-        <div className="px-5 py-3.5 flex items-center justify-between" style={{ borderBottom: '1px solid #f0efec' }}>
-          <span className="text-sm font-medium" style={{ color: '#1a1a1a' }}>Recent Appointments</span>
-          <Link href="/appointments" className="text-xs" style={{ color: '#9e9e96' }}>View all</Link>
+      <div style={{ background: '#fff', border: '1px solid #e8e8e6', borderRadius: '8px', overflow: 'hidden' }}>
+        <div style={{
+          display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+          padding: '14px 20px',
+          borderBottom: '1px solid #f0f0ee',
+        }}>
+          <span style={{ fontSize: '13px', fontWeight: 500, color: '#0f0f0f' }}>Recent Appointments</span>
+          <Link href="/appointments" style={{ fontSize: '12px', color: '#9a9a9a', textDecoration: 'none' }}>View all</Link>
         </div>
+
         {appointments.length === 0 ? (
-          <div className="py-12 text-center">
-            <p className="text-sm" style={{ color: '#9e9e96' }}>No appointments yet.</p>
-            <Link href="/appointments/new" className="mt-2 inline-block text-sm underline underline-offset-2" style={{ color: '#1a1a1a' }}>
-              Add your first
+          <div style={{ padding: '48px', textAlign: 'center' }}>
+            <p style={{ color: '#9a9a9a', fontSize: '13px' }}>No appointments yet.</p>
+            <Link href="/appointments/new" style={{ fontSize: '12px', color: '#0f0f0f', marginTop: '8px', display: 'inline-block' }}>
+              Add your first appointment →
             </Link>
           </div>
         ) : (
-          <div>
+          <>
+            <div style={{
+              display: 'grid',
+              gridTemplateColumns: '1fr 1fr 160px 90px',
+              padding: '8px 20px',
+              borderBottom: '1px solid #f5f5f3',
+            }}>
+              {['Patient', 'Doctor', 'Date & Time', 'Status'].map(h => (
+                <span key={h} style={{ fontSize: '11px', fontWeight: 500, color: '#a3a3a3', textTransform: 'uppercase', letterSpacing: '0.05em' }}>{h}</span>
+              ))}
+            </div>
             {appointments.map((a, i) => (
-              <div
-                key={a.id}
-                className="px-5 py-3 flex items-center justify-between"
-                style={{ borderTop: i > 0 ? '1px solid #f5f5f3' : undefined }}
-              >
+              <div key={a.id} style={{
+                display: 'grid',
+                gridTemplateColumns: '1fr 1fr 160px 90px',
+                padding: '11px 20px',
+                borderTop: i > 0 ? '1px solid #f5f5f3' : undefined,
+                alignItems: 'center',
+              }}>
                 <div>
-                  <p className="text-sm font-medium" style={{ color: '#1a1a1a' }}>{a.patient_name}</p>
-                  <p className="text-xs mt-0.5" style={{ color: '#9e9e96' }}>{a.doctor_name} · {a.appointment_date} at {a.appointment_time}</p>
+                  <div style={{ fontSize: '13px', fontWeight: 500, color: '#0f0f0f' }}>{a.patient_name}</div>
+                  <div style={{ fontSize: '11px', color: '#a3a3a3', marginTop: '1px' }}>{a.patient_phone}</div>
                 </div>
+                <div style={{ fontSize: '12px', color: '#4b4b4b' }}>{a.doctor_name}</div>
+                <div style={{ fontSize: '12px', color: '#4b4b4b' }}>{a.appointment_date} <span style={{ color: '#a3a3a3' }}>{a.appointment_time}</span></div>
                 <StatusBadge status={a.status} />
               </div>
             ))}
-          </div>
+          </>
         )}
       </div>
     </div>
