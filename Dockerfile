@@ -10,8 +10,7 @@ RUN npm ci
 COPY . .
 RUN npm run build
 
-RUN cp -r .next/standalone/. . && \
-    cp -r .next/static .next/standalone/.next/static && \
+RUN cp -r .next/static .next/standalone/.next/static && \
     mkdir -p /app/data
 
 EXPOSE 7860
